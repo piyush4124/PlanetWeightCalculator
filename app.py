@@ -1,34 +1,49 @@
-from flask import Flask
+from flask import Flask, request
 
 app = Flask(__name__)
 
+gravity = {
+    "Mercury": 0.38,
+    "Venus": 0.91,
+    "Mars": 0.38,
+    "Jupiter": 2.53,
+    "Saturn": 1.07,
+    "Uranus": 0.89,
+    "Neptune": 1.14
+}
+
 @app.route("/")
 def home():
-    return "Hello! My Python project is live 🚀"
+    return """
+    <h2>Planet Weight Calculator</h2>
+    <form action="/calculate" method="post">
+        Earth Weight: <input name="weight" type="number" step="any"><br><br>
+        Planet:
+        <select name="planet">
+            <option>Mercury</option>
+            <option>Venus</option>
+            <option>Mars</option>
+            <option>Jupiter</option>
+            <option>Saturn</option>
+            <option>Uranus</option>
+            <option>Neptune</option>
+        </select><br><br>
+        <button type="submit">Calculate</button>
+    </form>
+    """
+
+@app.route("/calculate", methods=["POST"])
+def calculate():
+    weight = float(request.form["weight"])
+    planet = request.form["planet"]
+
+    result = weight * gravity[planet]
+
+    return f"""
+    <h2>Result</h2>
+    <p>Your weight on {planet} is <b>{result:.2f}</b></p>
+    <a href="/">Go Back</a>
+    """
 
 if __name__ == "__main__":
     app.run()
-  
-print('Number	Planet	Relative Gravity\n1	Mercury	0.38\n2	Venus	0.91\n3	Mars	0.38\n4	Jupiter	2.53\n5	Saturn	1.07\n6	Uranus	0.89\n7	Neptune	1.14')
-
-weight = float(input('\nEnter your weight on Earth: '))
-planet = int(input('\nEnter destination planet number: '))
-
-if planet == 1:
-  destination_weight = weight * 0.38
-elif planet == 2:
-  destination_weight = weight * 0.91
-elif planet == 3:
-  destination_weight = weight * 0.38
-elif planet == 4:
-  destination_weight = weight *2.53
-elif planet == 5:
-  destination_weight = weight * 1.07
-elif planet == 6:
-  destination_weight = weight * 0.89
-elif planet == 7:
-  destination_weight = weight * 1.14
-else:
-  print('\nEnter a valid planet number, 1 or 2 or 3 or 4 or 5 or 6 or 7')
-
-print(destination_weight)
